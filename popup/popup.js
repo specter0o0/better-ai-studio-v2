@@ -177,13 +177,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // --- Custom Confirm Logic ---
+    const modalConfirm = document.getElementById('modal-confirm');
+    const confirmTitle = document.getElementById('confirm-title');
+    const confirmMessage = document.getElementById('confirm-message');
+    const btnConfirmOk = document.getElementById('btn-confirm-ok');
+    const btnConfirmCancel = document.getElementById('btn-confirm-cancel');
+
+    const showConfirm = (title, msg, onOk) => {
+        if (!modalConfirm) return;
+        confirmTitle.textContent = title || "System Alert";
+        confirmMessage.textContent = msg || "Are you sure you want to proceed?";
+        openModal(modalConfirm);
+        btnConfirmOk.onclick = () => { onOk(); closeModal(modalConfirm); };
+        btnConfirmCancel.onclick = () => closeModal(modalConfirm);
+    };
+
     // --- Interactions ---
     const openModal = (m) => { if (m) m.style.display = 'flex'; };
     const closeModal = (m) => { if (m) m.style.display = 'none'; };
 
     document.querySelectorAll('.modal-overlay').forEach(m => {
         m.onclick = (e) => { if (e.target === m) closeModal(m); };
-        m.querySelector('.btn-close-modal').onclick = () => closeModal(m);
+        m.querySelector('.btn-close-modal')?.addEventListener('click', () => closeModal(m));
     });
 
     const saveCurrentConfig = (feedback = false) => {
@@ -251,12 +267,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (instructionsText) instructionsText.oninput = () => checkChanges();
 
     if (btnResetData) btnResetData.onclick = () => {
-        if (confirm("FACTORY RESET - CLEAR ALL DATA FOREVER?")) {
+        showConfirm("FACTORY RESET", "Clear all presets and configurations permanently?", () => {
             localStorage.clear();
             const isExtension = typeof chrome !== 'undefined' && chrome.runtime?.id;
             if (isExtension) chrome.storage.local.clear(() => window.location.reload());
             else window.location.reload();
-        }
+        });
     };
 
     document.querySelectorAll('.dropdown-section .section-header').forEach(h => h.onclick = () => h.parentElement.classList.toggle('open'));
@@ -307,12 +323,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (toggleDisable) toggleDisable.onchange = (e) => {
         if (e.target.checked) {
-            if (!confirm("WARNING: THIS WILL DISABLE ALL BETTER AI STUDIO ENHANCEMENTS. PROCEED?")) {
-                e.target.checked = false;
-                return;
-            }
+            showConfirm("DISABLE SYSTEM", "This will suspend all Better AI Studio enhancements. Proceed?", () => {
+                saveCurrentConfig();
+            });
+            // Revert visually until confirmed
+            e.target.checked = false;
+        } else {
+            saveCurrentConfig();
         }
-        saveCurrentConfig();
     };
 
     const renderPresets = () => {
@@ -327,35 +345,70 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button class="reorder-btn btn-down" data-index="${i}"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
                 </div>
                 <div class="preset-title" data-index="${i}"><span class="title-text">${p.name}</span></div>
-                <button class="icon-button btn-delete" data-index="${i}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                <button class="icon-button btn-delete" data-index="${i}" style="margin-left: auto; margin-right: 8px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
             `;
             presetsContainer.appendChild(div);
         });
 
         presetsContainer.querySelectorAll('.btn-delete').forEach(btn => btn.onclick = (e) => {
             e.stopPropagation();
-            if (confirm("DELETE PRESET PERMANENTLY?")) {
+            showConfirm("DELETE PRESET", `Permanently remove "${state.presets[parseInt(btn.dataset.index)].name}"?`, () => {
                 const idx = parseInt(btn.dataset.index);
                 state.presets.splice(idx, 1);
                 if (state.activePresetIndex === idx) state.activePresetIndex = -1;
                 else if (state.activePresetIndex > idx) state.activePresetIndex--;
                 savePresets();
+            });
+        });
+
+        presetsContainer.querySelectorAll('.btn-up').forEach(btn => btn.onclick = (e) => {
+            e.stopPropagation();
+            const idx = parseInt(btn.dataset.index);
+            if (idx > 0) {
+                const temp = state.presets[idx];
+                state.presets[idx] = state.presets[idx - 1];
+                state.presets[idx - 1] = temp;
+                if (state.activePresetIndex === idx) state.activePresetIndex = idx - 1;
+                else if (state.activePresetIndex === idx - 1) state.activePresetIndex = idx;
+                savePresets();
+            }
+        });
+
+        presetsContainer.querySelectorAll('.btn-down').forEach(btn => btn.onclick = (e) => {
+            e.stopPropagation();
+            const idx = parseInt(btn.dataset.index);
+            if (idx < state.presets.length - 1) {
+                const temp = state.presets[idx];
+                state.presets[idx] = state.presets[idx + 1];
+                state.presets[idx + 1] = temp;
+                if (state.activePresetIndex === idx) state.activePresetIndex = idx + 1;
+                else if (state.activePresetIndex === idx + 1) state.activePresetIndex = idx;
+                savePresets();
             }
         });
 
         presetsContainer.querySelectorAll('.preset-title').forEach(el => {
-            el.onclick = () => { state.activePresetIndex = parseInt(el.dataset.index); savePresets(); };
+            el.onclick = () => {
+                const idx = parseInt(el.dataset.index);
+                if (state.activePresetIndex !== idx) {
+                    state.activePresetIndex = idx;
+                    savePresets();
+                }
+            };
             el.ondblclick = (e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 const idx = parseInt(el.dataset.index);
                 const span = el.querySelector('.title-text');
+                if (!span) return;
                 const inp = document.createElement('input');
                 inp.className = 'rename-input';
                 inp.value = state.presets[idx].name;
                 span.replaceWith(inp);
                 inp.focus();
+                inp.select();
                 inp.onblur = () => { if (inp.value.trim()) state.presets[idx].name = inp.value.trim(); savePresets(); };
-                inp.onkeydown = (ev) => { if (ev.key === 'Enter') inp.blur(); };
+                inp.onkeydown = (ev) => { if (ev.key === 'Enter') inp.blur(); if (ev.key === 'Escape') { renderPresets(); } };
             };
         });
     };

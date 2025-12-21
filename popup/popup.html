@@ -283,6 +283,25 @@
         </div>
     </div>
 
+    <div id="modal-confirm" class="modal-overlay" style="z-index: 200;">
+        <div class="modal-content" style="max-width: 280px; border: 1px solid var(--bas-danger);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 77, 77, 0.1);">
+                <span class="modal-title" id="confirm-title" style="color: var(--bas-danger);">System Alert</span>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message"
+                    style="font-size: 11px; margin: 0; color: var(--bas-text); line-height: 1.5; font-weight: 500;"></p>
+            </div>
+            <div class="modal-footer" style="padding: 10px 14px; border-top: none;">
+                <button class="btn-toggle" id="btn-confirm-cancel"
+                    style="font-size: 10px; border: none; background: transparent;">Cancel</button>
+                <button class="btn-primary" id="btn-confirm-ok"
+                    style="background: var(--bas-danger); border-color: var(--bas-danger); color: white; padding: 6px 14px;">Confirm
+                    Action</button>
+            </div>
+        </div>
+    </div>
+
     <script src="../config.js"></script>
     <script src="popup.js"></script>
 </body>

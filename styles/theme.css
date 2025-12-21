@@ -127,7 +127,6 @@ main {
     border-radius: 0;
     margin: 0 var(--bas-spacing) 6px;
     padding: 10px 14px;
-    /* Increased horizontal padding slightly for better feel */
 }
 
 .section-header {
@@ -140,13 +139,18 @@ main {
 .section-title {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     font-size: 12px;
     font-weight: 700;
     color: var(--bas-text);
     opacity: 0.95;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+.section-title svg {
+    width: 14px;
+    height: 14px;
 }
 
 .dropdown-content {
@@ -209,7 +213,8 @@ main {
     background: var(--bas-card-hover);
     border: 1px solid var(--bas-border);
     color: var(--bas-text-muted);
-    padding: 8px;
+    padding: 8px 14px;
+    /* Aligns text with headers at x=36 */
     border-radius: 0;
     font-size: 10px;
     font-weight: 700;
@@ -396,15 +401,12 @@ input[type="range"]::-webkit-slider-thumb {
     min-height: 0;
 }
 
-.presets-section .section-header {
-    padding: 10px 0 8px;
-    /* Remove horizontal padding as it's already in .section container */
-}
-
 #presets-container {
     flex: 1;
     overflow-y: auto;
     padding: 0 0 10px;
+    margin-top: 10px;
+    /* Essential gap under section header */
 }
 
 /* Rename Input Styling */
@@ -442,7 +444,8 @@ input[type="range"]::-webkit-slider-thumb {
 .preset-reorder {
     display: flex;
     flex-direction: column;
-    width: 32px;
+    width: 22px;
+    /* Calibrated for x=36 text alignment */
     border-right: 1px solid var(--bas-border);
     height: 100%;
 }
@@ -467,7 +470,8 @@ input[type="range"]::-webkit-slider-thumb {
 
 .preset-title {
     flex: 1;
-    padding: 0 12px;
+    padding: 0 10px;
+    /* Text starts at x=36 (14px section padding + 22px arrows) */
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
