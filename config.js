@@ -22,21 +22,50 @@ const BAS_CONFIG = {
     },
     font: 'Inter, system-ui, -apple-system, sans-serif'
   },
+  settings: {
+    autoCloseNav: true,
+    autoCloseSettings: true,
+    collapseHistory: true,
+    hideEmail: true
+  },
   presets: {
     default: {
       name: 'Default',
       instructions: '',
-      tools: {
-        search: false,
-        urlContext: false,
-        code: false,
-        structuredOutput: false,
-        functionCalling: false
-      },
-      settings: {
-        temperature: 1.0,
-        topP: 0.95
-      }
+      search: false,
+      url: false,
+      code: false,
+      structured: false,
+      functions: false,
+      temp: "1.00",
+      topP: "0.95",
+      maxTokens: "2048"
+    }
+  },
+  models: {
+    'gemini-3-pro': {
+      name: 'Gemini 3 Pro',
+      id: 'models/gemini-3-pro-preview',
+      tempRange: { min: 0, max: 2, step: 0.05 },
+      capabilities: { search: true, code: true, functions: true, structured: true, url: true }
+    },
+    'gemini-3-flash': {
+      name: 'Gemini 3 Flash',
+      id: 'models/gemini-3-flash-preview',
+      tempRange: { min: 0, max: 2, step: 0.05 },
+      capabilities: { search: true, code: true, functions: true, structured: true, url: true }
+    },
+    'gemini-2.5-pro': {
+      name: 'Gemini 2.5 Pro',
+      id: 'models/gemini-2.5-pro-preview',
+      tempRange: { min: 0, max: 2, step: 0.05 },
+      capabilities: { search: true, code: true, functions: true, structured: true, url: true }
+    },
+    'nano-banana-pro': {
+      name: 'Nano Banana Pro',
+      id: 'models/gemini-3-pro-image-preview',
+      tempRange: { min: 0, max: 1, step: 0.01 },
+      capabilities: { search: false, code: false, functions: false, structured: false, url: false, aspectRatio: true, resolution: true }
     }
   }
 };

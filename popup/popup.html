@@ -48,144 +48,222 @@
         <div class="nav-tab active" data-tab="presets">Presets</div>
         <div class="nav-tab" data-tab="themes">Themes</div>
         <div class="nav-tab" data-tab="elements">Elements</div>
-        <div class="nav-tab" data-tab="for-fun">For fun</div>
+        <div class="nav-tab" data-tab="other">Other</div>
     </nav>
 
     <main>
-        <!-- Instructions Section -->
-        <div class="section" id="btn-open-instructions" style="cursor: pointer;">
-            <div class="section-header">
-                <div class="section-title">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        <!-- Tab: Presets -->
+        <div id="tab-presets" class="tab-content active">
+            <!-- Instructions & Model Section -->
+            <div class="input-row" style="margin-bottom: 6px;">
+                <div class="model-select-wrapper">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2.5">
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                     </svg>
-                    <span>Instructions</span>
+                    <select class="model-select" id="select-model">
+                        <option value="gemini-3-pro">Gemini 3 Pro</option>
+                        <option value="gemini-3-flash">Gemini 3 Flash</option>
+                        <option value="nano-banana-pro">Nano Banana Pro</option>
+                    </select>
                 </div>
-                <button class="icon-button no-hover"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2.5">
+                <div class="section" id="btn-open-instructions"
+                    style="cursor: pointer; margin: 0; padding: 0 12px; height: 36px; display: flex; align-items: center; justify-content: space-between; flex: 1.5;">
+                    <div class="section-title" style="font-size: 10px;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                        <span>Instructions</span>
+                    </div>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        style="opacity: 0.5;">
                         <path d="M12 20h9"></path>
                         <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                    </svg></button>
-            </div>
-        </div>
-
-        <!-- Tools Dropdown -->
-        <div class="section dropdown-section open" id="section-tools">
-            <div class="section-header">
-                <div class="section-title">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2.5">
-                        <path
-                            d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
-                        </path>
                     </svg>
-                    <span>Tools</span>
-                </div>
-                <div class="icon-button dropdown-arrow no-hover"><svg width="14" height="14" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2.5">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg></div>
-            </div>
-            <div class="dropdown-content">
-                <div class="input-row">
-                    <button class="btn-toggle active" id="btn-search">Search</button>
-                    <button class="btn-toggle active" id="btn-url">URL context</button>
-                    <button class="btn-toggle" id="btn-code">Code</button>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
-                    <div class="input-group">
-                        <span
-                            style="font-size: 10px; font-weight: 700; color: var(--bas-text-muted); text-transform: uppercase;">Structured</span>
-                        <button class="icon-button no-hover">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5">
-                                <path d="M12 20h9"></path>
-                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="input-group">
-                        <span
-                            style="font-size: 10px; font-weight: 700; color: var(--bas-text-muted); text-transform: uppercase;">Functions</span>
-                        <button class="icon-button no-hover">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5">
-                                <path d="M12 20h9"></path>
-                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                            </svg>
-                        </button>
-                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Other Settings Dropdown -->
-        <div class="section dropdown-section open" id="section-other">
-            <div class="section-header">
-                <div class="section-title">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2.5">
-                        <circle cx="12" cy="12" r="3"></circle>
-                        <path
-                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
-                        </path>
-                    </svg>
-                    <span>Other</span>
+            <!-- Tools Dropdown -->
+            <div class="section dropdown-section open" id="section-tools">
+                <div class="section-header">
+                    <div class="section-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path
+                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                            </path>
+                        </svg>
+                        <span>Tools</span>
+                    </div>
+                    <div class="icon-button dropdown-arrow no-hover"><svg width="14" height="14" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg></div>
                 </div>
-                <div class="icon-button dropdown-arrow no-hover"><svg width="14" height="14" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2.5">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg></div>
-            </div>
-            <div class="dropdown-content">
-                <div class="sliders-grid">
-                    <div class="slider-container">
-                        <label class="slider-info">Temperature</label>
-                        <div class="slider-row">
-                            <input type="text" class="val-badge" id="val-temp" value="0.70">
-                            <input type="range" class="bas-range" id="range-temp" min="0" max="2" step="0.05"
-                                value="0.70">
+                <div class="dropdown-content">
+                    <div class="input-row tools-grid">
+                        <button class="btn-toggle active" id="btn-search">Search</button>
+                        <button class="btn-toggle active" id="btn-url">URL context</button>
+                        <button class="btn-toggle" id="btn-code">Code</button>
+                    </div>
+                    <div class="input-row tools-grid-split" style="margin-top: 8px;">
+                        <div class="toggle-with-settings">
+                            <button class="btn-toggle" id="btn-structured">Structured</button>
+                            <button class="icon-button btn-edit" id="btn-edit-structured" title="Edit Schema">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path
+                                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                                    </path>
+                                </svg>
+                            </button>
                         </div>
-                    </div>
-                    <div class="slider-container">
-                        <label class="slider-info">Top P</label>
-                        <div class="slider-row">
-                            <input type="text" class="val-badge" id="val-top-p" value="0.95">
-                            <input type="range" class="bas-range" id="range-top-p" min="0" max="1" step="0.01"
-                                value="0.95">
+                        <div class="toggle-with-settings">
+                            <button class="btn-toggle" id="btn-functions">Functions</button>
+                            <button class="icon-button btn-edit" id="btn-edit-functions" title="Edit Functions">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path
+                                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                                    </path>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Other Settings Dropdown -->
+            <div class="section dropdown-section open" id="section-other-presets">
+                <div class="section-header">
+                    <div class="section-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                            </path>
+                        </svg>
+                        <span>Run Settings</span>
+                    </div>
+                    <div class="icon-button dropdown-arrow no-hover"><svg width="14" height="14" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg></div>
+                </div>
+                <div class="dropdown-content">
+                    <div class="sliders-grid">
+                        <div class="slider-container">
+                            <label class="slider-info">Temperature</label>
+                            <div class="slider-row">
+                                <input type="text" class="val-badge" id="val-temp" value="0.70">
+                                <input type="range" class="bas-range" id="range-temp" min="0" max="2" step="0.05"
+                                    value="0.70">
+                            </div>
+                        </div>
+                        <div class="slider-container">
+                            <label class="slider-info">Top P</label>
+                            <div class="slider-row">
+                                <input type="text" class="val-badge" id="val-top-p" value="0.95">
+                                <input type="range" class="bas-range" id="range-top-p" min="0" max="1" step="0.01"
+                                    value="0.95">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="advanced-toggle" id="toggle-advanced">
+                        <span>Show more settings</span>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="3">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+
+                    <div class="advanced-content" id="advanced-settings-content">
+                        <div class="slider-container">
+                            <label class="slider-info">Max Output Tokens</label>
+                            <div class="slider-row">
+                                <input type="text" class="val-badge" id="val-max-tokens" value="2048"
+                                    style="width: 45px;">
+                                <input type="range" class="bas-range" id="range-max-tokens" min="1" max="8192" step="1"
+                                    value="2048">
+                            </div>
+                        </div>
+                        <div id="nano-settings"
+                            style="display: none; flex-direction: column; gap: 8px; margin-top: 10px; border-top: 1px dashed var(--bas-border); padding-top: 10px;">
+                            <div class="slider-container">
+                                <label class="slider-info">Aspect Ratio</label>
+                                <div class="model-select-wrapper" style="margin: 0; width: 100%;">
+                                    <select class="model-select" id="select-aspect-ratio">
+                                        <option value="1:1">1:1</option>
+                                        <option value="4:3">4:3</option>
+                                        <option value="3:4">3:4</option>
+                                        <option value="16:9">16:9</option>
+                                        <option value="9:16">9:16</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="slider-container">
+                                <label class="slider-info">Resolution</label>
+                                <div class="model-select-wrapper" style="margin: 0; width: 100%;">
+                                    <select class="model-select" id="select-resolution">
+                                        <option value="Low">Low</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="High">High</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Presets Section -->
+            <div class="section presets-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <span>Your Presets</span>
+                    </div>
+                    <button class="icon-button" id="btn-add-preset"><svg width="18" height="18" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="3">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg></button>
+                </div>
+                <div id="presets-container">
+                    <!-- Presets injected via JS -->
+                </div>
+            </div>
         </div>
 
-        <!-- Presets Section -->
-        <div class="section presets-section">
-            <div class="section-header">
-                <div class="section-title">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2.5">
-                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    <span>Your Presets</span>
-                </div>
-                <button class="icon-button" id="btn-add-preset"><svg width="18" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="3">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg></button>
-            </div>
-            <div id="presets-container">
-                <!-- Presets injected via JS -->
-            </div>
+        <!-- Tab: Themes -->
+        <div id="tab-themes" class="tab-content">
+            <!-- Content removed as per user request -->
+        </div>
+
+        <!-- Tab: Elements -->
+        <div id="tab-elements" class="tab-content">
+            <!-- Content removed as per user request -->
+        </div>
+
+        <!-- Tab: Other -->
+        <div id="tab-other" class="tab-content">
+            <!-- Content removed as per user request -->
         </div>
     </main>
 
-    <footer>
+    <footer id="global-footer" style="padding: 0 var(--bas-spacing) 14px;">
         <button id="btn-save-config" class="btn-save-max" disabled>Save Configuration</button>
     </footer>
+
 
     <!-- Modals -->
     <div id="modal-instructions" class="modal-overlay">
@@ -203,8 +281,52 @@
                     style="width: 100%; height: 120px; background: var(--bas-card-hover); border: 1px solid var(--bas-border); color: var(--bas-text); padding: 10px; resize: none; border-radius: 0; outline: none; margin-bottom: 12px; font-family: inherit; font-size: 13px;"></textarea>
                 <div id="quick-buttons" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
             </div>
-            <div class="modal-footer">
-                <button class="btn-primary" id="btn-save-instructions">Apply</button>
+            <div class="modal-footer" style="border-top: none;">
+                <button class="btn-primary" id="btn-save-instructions" style="width: 100%;">Apply Instructions</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-structured" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">Structured Output (JSON)</span>
+                <button class="icon-button btn-close-modal"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg></button>
+            </div>
+            <div class="modal-body">
+                <textarea id="structured-schema-text" class="schema-textarea"
+                    placeholder='{ "type": "object", ... }'></textarea>
+                <p style="font-size: 10px; color: var(--bas-text-muted); margin-top: 8px;">Paste your JSON schema here
+                    to enforce structured output.</p>
+            </div>
+            <div class="modal-footer" style="border-top: none;">
+                <button class="btn-primary" id="btn-save-structured" style="width: 100%;">Apply Schema</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-functions" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">Function Calling (JSON)</span>
+                <button class="icon-button btn-close-modal"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg></button>
+            </div>
+            <div class="modal-body">
+                <textarea id="functions-schema-text" class="schema-textarea"
+                    placeholder='[ { "name": "...", ... } ]'></textarea>
+                <p style="font-size: 10px; color: var(--bas-text-muted); margin-top: 8px;">Paste your function
+                    declarations array here.</p>
+            </div>
+            <div class="modal-footer" style="border-top: none;">
+                <button class="btn-primary" id="btn-save-functions" style="width: 100%;">Apply Functions</button>
             </div>
         </div>
     </div>
@@ -240,10 +362,46 @@
                     </svg></button>
             </div>
             <div class="modal-body">
-                <div class="input-group" style="margin-bottom: 12px; height: 50px;">
-                    <div style="display: flex; flex-direction: column;">
-                        <span style="font-size: 12px; font-weight: 700;">Extension Version</span>
-                        <span style="font-size: 11px; color: var(--bas-text-muted);">Version 1.1.6</span>
+                <div class="settings-list" id="modal-settings-list">
+                    <div class="setting-card">
+                        <div class="setting-info">
+                            <span class="setting-title">Hide Email</span>
+                            <span class="setting-desc">Replace email with name in bottom left</span>
+                        </div>
+                        <label class="switch-premium">
+                            <input type="checkbox" id="setting-hide-email">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-card">
+                        <div class="setting-info">
+                            <span class="setting-title">Auto-close Navigation</span>
+                            <span class="setting-desc">Close sidebar by default</span>
+                        </div>
+                        <label class="switch-premium">
+                            <input type="checkbox" id="setting-auto-nav">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-card">
+                        <div class="setting-info">
+                            <span class="setting-title">Auto-close Settings</span>
+                            <span class="setting-desc">Close run settings panel by default</span>
+                        </div>
+                        <label class="switch-premium">
+                            <input type="checkbox" id="setting-auto-settings">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-card">
+                        <div class="setting-info">
+                            <span class="setting-title">Collapse History</span>
+                            <span class="setting-desc">Collapse prompt history segments</span>
+                        </div>
+                        <label class="switch-premium">
+                            <input type="checkbox" id="setting-collapse-history">
+                            <span class="switch-slider"></span>
+                        </label>
                     </div>
                 </div>
 
@@ -259,24 +417,22 @@
                         </svg>
                         Danger Zone
                     </span>
-                    <div class="danger-card">
-                        <div style="display: flex; flex-direction: column; gap: 2px;">
-                            <span style="font-size: 11px; font-weight: 700;">Disable All Functionality</span>
-                            <span style="font-size: 10px; color: var(--bas-text-muted); max-width: 180px;">Temporarily
-                                disable all extension features</span>
+                    <div class="setting-card danger-item">
+                        <div class="setting-info">
+                            <span class="setting-title">Disable All Functionality</span>
+                            <span class="setting-desc">Temporarily disable extension features</span>
                         </div>
-                        <label class="switch">
+                        <label class="switch-premium">
                             <input type="checkbox" id="toggle-disable">
-                            <span class="slider"></span>
+                            <span class="switch-slider"></span>
                         </label>
                     </div>
-                    <div class="danger-card">
-                        <div style="display: flex; flex-direction: column; gap: 2px;">
-                            <span style="font-size: 11px; font-weight: 700;">Reset All Settings</span>
-                            <span style="font-size: 10px; color: var(--bas-text-muted);">Clear all presets and
-                                configuration</span>
+                    <div class="setting-card danger-item">
+                        <div class="setting-info">
+                            <span class="setting-title">Reset All Settings</span>
+                            <span class="setting-desc">Clear all configuration</span>
                         </div>
-                        <button class="btn-danger" id="btn-reset-data">Factory Reset</button>
+                        <button class="btn-danger-premium" id="btn-reset-data">FACTORY RESET</button>
                     </div>
                 </div>
             </div>

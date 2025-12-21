@@ -1,0 +1,23 @@
+/* Better AI Studio - In-page AI Studio fixes */
+.bas-email-replacement {
+    margin-left: 14px !important;
+    padding-left: 10px !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.4) !important;
+    font-weight: 800 !important;
+    font-size: 11px !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    opacity: 1 !important;
+    color: #f2f2f2 !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+/* Forced hidden email prefix */
+body.bas-hide-email .user-button span:not(.bas-email-replacement),
+body.bas-hide-email .user-info-container span:not(.bas-email-replacement),
+body.bas-hide-email .account-switcher-button span:not(.bas-email-replacement),
+body.bas-hide-email .account-switcher-text:not(.bas-email-replacement) {
+    display: none !important;
+}

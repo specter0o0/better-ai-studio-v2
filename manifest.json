@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Better AI Studio",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Automatically apply your favorite AI studio settings, and avoid manual setup for each chat.",
   "permissions": [
     "storage"
@@ -22,6 +22,9 @@
       "js": [
         "config.js",
         "scripts/content.js"
+      ],
+      "css": [
+        "styles/injected.css"
       ]
     }
   ],

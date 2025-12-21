@@ -31,13 +31,26 @@ document.addEventListener('DOMContentLoaded', () => {
         activePresetIndex: -1,
         activeTab: 'PRESETS',
         config: {
+            model: "gemini-3-pro",
             search: true,
             url: true,
             code: false,
             temp: "0.70",
             topP: "0.95",
+            maxTokens: "2048",
+            structured: false,
+            structuredSchema: "",
+            functions: false,
+            functionsSchema: "",
             instructions: "",
-            disable: false
+            disable: false,
+            // General Settings
+            autoCloseNav: BAS_CONFIG.settings.autoCloseNav,
+            autoCloseSettings: BAS_CONFIG.settings.autoCloseSettings,
+            collapseHistory: BAS_CONFIG.settings.collapseHistory,
+            hideEmail: BAS_CONFIG.settings.hideEmail,
+            aspectRatio: "1:1",
+            resolution: "Low"
         },
         theme: 'dark'
     };
@@ -89,16 +102,110 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const checkChanges = () => {
         if (!btnSaveConfig) return;
+        const getVal = (id) => {
+            const el = document.getElementById(id) || document.getElementById(id + '-tab');
+            if (!el) return null;
+            if (el.type === 'checkbox') return el.checked;
+            return el.value;
+        };
         const currentConfig = {
+            model: getVal('select-model') ?? "gemini-3-pro",
             search: document.getElementById('btn-search')?.classList.contains('active') ?? true,
             url: document.getElementById('btn-url')?.classList.contains('active') ?? true,
             code: document.getElementById('btn-code')?.classList.contains('active') ?? false,
-            temp: document.getElementById('range-temp')?.value ?? "0.70",
-            topP: document.getElementById('range-top-p')?.value ?? "0.95",
+            structured: document.getElementById('btn-structured')?.classList.contains('active') ?? false,
+            structuredSchema: getVal('structured-schema-text') ?? "",
+            functions: document.getElementById('btn-functions')?.classList.contains('active') ?? false,
+            functionsSchema: getVal('functions-schema-text') ?? "",
+            temp: getVal('range-temp') ?? "0.70",
+            topP: getVal('range-top-p') ?? "0.95",
+            maxTokens: getVal('range-max-tokens') ?? "2048",
             instructions: instructionsText?.value ?? "",
-            disable: toggleDisable?.checked ?? false
+            disable: getVal('toggle-disable') ?? false,
+            autoCloseNav: getVal('setting-auto-nav') ?? true,
+            autoCloseSettings: getVal('setting-auto-settings') ?? true,
+            collapseHistory: getVal('setting-collapse-history') ?? true,
+            hideEmail: getVal('setting-hide-email') ?? true,
+            aspectRatio: getVal('select-aspect-ratio') ?? "1:1",
+            resolution: getVal('select-resolution') ?? "Low"
         };
         btnSaveConfig.disabled = JSON.stringify(currentConfig) === originalConfig;
+    };
+
+    // --- Mirroring Logic & Constraints ---
+    const applyMirroring = (sourceId, shouldBroadcast = true) => {
+        const modelKey = document.getElementById('select-model')?.value || 'gemini-3-pro';
+        const caps = BAS_CONFIG.models[modelKey]?.capabilities || { search: true, code: true, functions: true, structured: true };
+
+        const btnSearch = document.getElementById('btn-search');
+        const btnUrl = document.getElementById('btn-url');
+        const btnCode = document.getElementById('btn-code');
+        const btnStructured = document.getElementById('btn-structured');
+        const btnFunctions = document.getElementById('btn-functions');
+
+        // 1. Model Support
+        btnSearch.style.display = caps.search ? 'block' : 'none';
+        btnUrl.style.display = caps.url ? 'block' : 'none';
+        btnCode.style.display = caps.code ? 'block' : 'none';
+        btnStructured.parentElement.style.display = caps.structured ? 'flex' : 'none';
+        btnFunctions.parentElement.style.display = caps.functions ? 'flex' : 'none';
+
+        // 2. Interaction Exclusivity (Like the Website)
+        if (sourceId === 'btn-functions' && btnFunctions.classList.contains('active')) {
+            // Function Calling is exclusive to ALL
+            btnSearch.classList.remove('active');
+            btnUrl.classList.remove('active');
+            btnCode.classList.remove('active');
+            btnStructured.classList.remove('active');
+        } else if (sourceId === 'btn-structured' && btnStructured.classList.contains('active')) {
+            // Structured Output is exclusive to Code and Functions
+            btnCode.classList.remove('active');
+            btnFunctions.classList.remove('active');
+        } else if (sourceId === 'btn-code' && btnCode.classList.contains('active')) {
+            // Code is exclusive to Structured and Functions
+            btnStructured.classList.remove('active');
+            btnFunctions.classList.remove('active');
+        } else if ((sourceId === 'btn-search' || sourceId === 'btn-url') && (btnSearch.classList.contains('active') || btnUrl.classList.contains('active'))) {
+            // Search/URL are exclusive to Functions
+            btnFunctions.classList.remove('active');
+        }
+
+        // Update state
+        state.config.search = btnSearch.classList.contains('active');
+        state.config.url = btnUrl.classList.contains('active');
+        state.config.code = btnCode.classList.contains('active');
+        state.config.structured = btnStructured.classList.contains('active');
+        state.config.functions = btnFunctions.classList.contains('active');
+
+        // General settings sync
+        state.config.autoCloseNav = document.getElementById('setting-auto-nav')?.checked;
+        state.config.autoCloseSettings = document.getElementById('setting-auto-settings')?.checked;
+        state.config.collapseHistory = document.getElementById('setting-collapse-history')?.checked;
+        state.config.hideEmail = document.getElementById('setting-hide-email')?.checked;
+
+        updateSchemaButtonStates();
+        if (shouldBroadcast) broadcastState();
+        checkChanges();
+    };
+
+    const updateSchemaButtonStates = () => {
+        const btnStrEdit = document.getElementById('btn-edit-structured');
+        const btnFunEdit = document.getElementById('btn-edit-functions');
+        const btnStr = document.getElementById('btn-structured');
+        const btnFun = document.getElementById('btn-functions');
+
+        if (btnStrEdit) {
+            const isActive = btnStr?.classList.contains('active');
+            btnStrEdit.classList.toggle('active', !!isActive);
+            btnStrEdit.style.opacity = isActive ? '1' : '0.2';
+            btnStrEdit.style.pointerEvents = isActive ? 'auto' : 'none';
+        }
+        if (btnFunEdit) {
+            const isActive = btnFun?.classList.contains('active');
+            btnFunEdit.classList.toggle('active', !!isActive);
+            btnFunEdit.style.opacity = isActive ? '1' : '0.2';
+            btnFunEdit.style.pointerEvents = isActive ? 'auto' : 'none';
+        }
     };
 
     const safeStorage = {
@@ -155,25 +262,83 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const applyConfig = (config) => {
         if (!config) return;
+        const selectModel = document.getElementById('select-model');
+        if (selectModel) selectModel.value = config.model || "gemini-3-pro";
+
         document.getElementById('btn-search')?.classList.toggle('active', !!config.search);
         document.getElementById('btn-url')?.classList.toggle('active', !!config.url);
         document.getElementById('btn-code')?.classList.toggle('active', !!config.code);
 
-        ['temp', 'top-p'].forEach(id => {
+        document.getElementById('btn-search')?.classList.toggle('active', !!config.search);
+        document.getElementById('btn-url')?.classList.toggle('active', !!config.url);
+        document.getElementById('btn-code')?.classList.toggle('active', !!config.code);
+        document.getElementById('btn-structured')?.classList.toggle('active', !!config.structured);
+        document.getElementById('btn-functions')?.classList.toggle('active', !!config.functions);
+
+        const structuredText = document.getElementById('structured-schema-text');
+        if (structuredText) structuredText.value = config.structuredSchema || "";
+
+        const functionsText = document.getElementById('functions-schema-text');
+        if (functionsText) functionsText.value = config.functionsSchema || "";
+
+        updateSchemaButtonStates();
+
+        ['temp', 'top-p', 'max-tokens'].forEach(id => {
             const range = document.getElementById(`range-${id}`);
             const input = document.getElementById(`val-${id}`);
-            const key = id === 'temp' ? 'temp' : 'topP';
+            let key = '';
+            if (id === 'temp') key = 'temp';
+            else if (id === 'top-p') key = 'topP';
+            else if (id === 'max-tokens') key = 'maxTokens';
+
             if (range) { range.value = config[key]; updateSliderProgress(range); }
             if (input) { input.value = config[key]; }
         });
 
         if (instructionsText) instructionsText.value = config.instructions || "";
         if (toggleDisable) toggleDisable.checked = !!config.disable;
+
+        // General settings
+        const hideEmail = document.getElementById('setting-hide-email');
+        if (hideEmail) hideEmail.checked = config.hideEmail !== false;
+        const autoNav = document.getElementById('setting-auto-nav');
+        if (autoNav) autoNav.checked = config.autoCloseNav !== false;
+        const autoSettings = document.getElementById('setting-auto-settings');
+        if (autoSettings) autoSettings.checked = config.autoCloseSettings !== false;
+        const collapseHistory = document.getElementById('setting-collapse-history');
+        if (collapseHistory) collapseHistory.checked = config.collapseHistory !== false;
+
+        // Update Slider Ranges based on model
+        const modelData = BAS_CONFIG.models[config.model || 'gemini-3-pro'];
+        if (modelData && modelData.tempRange) {
+            const tempRange = document.getElementById('range-temp');
+            if (tempRange) {
+                tempRange.min = modelData.tempRange.min;
+                tempRange.max = modelData.tempRange.max;
+                tempRange.step = modelData.tempRange.step;
+            }
+        }
+
+        // Nano specific UI
+        const nanoSection = document.getElementById('nano-settings');
+        if (nanoSection) {
+            nanoSection.style.display = config.model === 'nano-banana-pro' ? 'flex' : 'none';
+        }
+        const selectAspect = document.getElementById('select-aspect-ratio');
+        if (selectAspect) selectAspect.value = config.aspectRatio || "1:1";
+        const selectRes = document.getElementById('select-resolution');
+        if (selectRes) selectRes.value = config.resolution || "Low";
+
+        applyMirroring('init', false); // DO NOT broadcast during apply
     };
 
     const applyActiveTab = (tabId) => {
+        const normalizedTabId = tabId.toLowerCase();
         document.querySelectorAll('.nav-tab').forEach(tab => {
-            tab.classList.toggle('active', tab.textContent.trim().toUpperCase() === tabId.toUpperCase());
+            tab.classList.toggle('active', tab.dataset.tab.toLowerCase() === normalizedTabId);
+        });
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.toggle('active', content.id === `tab-${normalizedTabId}`);
         });
     };
 
@@ -197,20 +362,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const openModal = (m) => { if (m) m.style.display = 'flex'; };
     const closeModal = (m) => { if (m) m.style.display = 'none'; };
 
-    document.querySelectorAll('.modal-overlay').forEach(m => {
+    document.querySelectorAll('.modal-overlay:not(#modal-confirm)').forEach(m => {
         m.onclick = (e) => { if (e.target === m) closeModal(m); };
         m.querySelector('.btn-close-modal')?.addEventListener('click', () => closeModal(m));
     });
 
     const saveCurrentConfig = (feedback = false) => {
+        const getVal = (id) => {
+            const el = document.getElementById(id) || document.getElementById(id + '-tab');
+            if (!el) return null;
+            if (el.type === 'checkbox') return el.checked;
+            return el.value;
+        };
         const config = {
+            model: getVal('select-model'),
             search: document.getElementById('btn-search')?.classList.contains('active'),
             url: document.getElementById('btn-url')?.classList.contains('active'),
             code: document.getElementById('btn-code')?.classList.contains('active'),
-            temp: document.getElementById('range-temp')?.value,
-            topP: document.getElementById('range-top-p')?.value,
+            structured: document.getElementById('btn-structured')?.classList.contains('active'),
+            structuredSchema: getVal('structured-schema-text') || "",
+            functions: document.getElementById('btn-functions')?.classList.contains('active'),
+            functionsSchema: getVal('functions-schema-text') || "",
+            temp: getVal('range-temp'),
+            topP: getVal('range-top-p'),
+            maxTokens: getVal('range-max-tokens'),
             instructions: instructionsText?.value || "",
-            disable: toggleDisable?.checked
+            disable: getVal('toggle-disable'),
+            hideEmail: getVal('setting-hide-email'),
+            autoCloseNav: getVal('setting-auto-nav'),
+            autoCloseSettings: getVal('setting-auto-settings'),
+            collapseHistory: getVal('setting-collapse-history'),
+            aspectRatio: getVal('select-aspect-ratio'),
+            resolution: getVal('select-resolution')
         };
         state.config = config;
         originalConfig = JSON.stringify(config);
@@ -222,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnSaveConfig.textContent = 'SAVED';
                 btnSaveConfig.style.background = '#4ade80';
                 btnSaveConfig.style.color = '#000';
-                setTimeout(() => { btnSaveConfig.textContent = oldText; btnSaveConfig.style.background = ''; btnSaveConfig.style.color = ''; checkChanges(); }, 1000);
+                setTimeout(() => { btnSaveConfig.textContent = oldText; btnSaveConfig.style.background = ''; btnSaveConfig.style.color = ''; checkChanges(); }, 800);
             }
         });
     };
@@ -251,17 +434,92 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnSettings) btnSettings.onclick = () => openModal(modalSettings);
     if (btnOpenInstructions) btnOpenInstructions.onclick = () => openModal(modalInstructions);
-    if (btnSaveInstructions) btnSaveInstructions.onclick = () => { state.config.instructions = instructionsText.value; closeModal(modalInstructions); saveCurrentConfig(); };
+    if (btnSaveInstructions) btnSaveInstructions.onclick = () => {
+        state.config.instructions = instructionsText.value;
+        closeModal(modalInstructions);
+        saveCurrentConfig();
+    };
+
+    // Advanced Toggle
+    const toggleAdvanced = document.getElementById('toggle-advanced');
+    const advancedContent = document.getElementById('advanced-settings-content');
+    if (toggleAdvanced && advancedContent) {
+        toggleAdvanced.onclick = () => {
+            const isOpen = advancedContent.classList.toggle('open');
+            toggleAdvanced.classList.toggle('open', isOpen);
+            toggleAdvanced.querySelector('span').textContent = isOpen ? 'Show fewer settings' : 'Show more settings';
+        };
+    }
+
+    // Schema Modals
+    const modalStructured = document.getElementById('modal-structured');
+    const modalFunctions = document.getElementById('modal-functions');
+    const btnEditStructured = document.getElementById('btn-edit-structured');
+    const btnEditFunctions = document.getElementById('btn-edit-functions');
+    const btnSaveStructured = document.getElementById('btn-save-structured');
+    const btnSaveFunctions = document.getElementById('btn-save-functions');
+
+    if (btnEditStructured) btnEditStructured.onclick = () => openModal(modalStructured);
+    if (btnEditFunctions) btnEditFunctions.onclick = () => openModal(modalFunctions);
+
+    if (btnSaveStructured) btnSaveStructured.onclick = () => {
+        const text = document.getElementById('structured-schema-text').value.trim();
+        state.config.structuredSchema = text;
+        closeModal(modalStructured);
+        saveCurrentConfig();
+    };
+
+    if (btnSaveFunctions) btnSaveFunctions.onclick = () => {
+        const text = document.getElementById('functions-schema-text').value.trim();
+        state.config.functionsSchema = text;
+        closeModal(modalFunctions);
+        saveCurrentConfig();
+    };
+
+    const btnStructured = document.getElementById('btn-structured');
+    if (btnStructured) btnStructured.onclick = () => {
+        btnStructured.classList.toggle('active');
+        applyMirroring('btn-structured');
+        saveCurrentConfig();
+    };
+
+    const btnFunctions = document.getElementById('btn-functions');
+    if (btnFunctions) btnFunctions.onclick = () => {
+        btnFunctions.classList.toggle('active');
+        applyMirroring('btn-functions');
+        saveCurrentConfig();
+    };
+
+    // General Settings listeners
+    ['setting-hide-email', 'setting-auto-nav', 'setting-auto-settings', 'setting-collapse-history'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.onchange = () => {
+            applyMirroring(id);
+            saveCurrentConfig();
+        };
+    });
+
+    const selectModel = document.getElementById('select-model');
+    if (selectModel) selectModel.onchange = () => {
+        applyMirroring('model');
+        saveCurrentConfig();
+    };
+
+    const selectAspect = document.getElementById('select-aspect-ratio');
+    if (selectAspect) selectAspect.onchange = () => saveCurrentConfig();
+
+    const selectRes = document.getElementById('select-resolution');
+    if (selectRes) selectRes.onchange = () => saveCurrentConfig();
 
     // Quick Buttons
-    const quickButtonsContainer_I = document.getElementById('quick-buttons');
-    if (quickButtonsContainer_I) {
-        quickButtonsContainer_I.innerHTML = '';
-        [{ l: 'Concise', t: 'Short answers.' }, { l: 'Technical', t: 'Deep dive.' }, { l: 'Creative', t: 'Unconventional.' }].forEach(a => {
+    const qButtons = [{ l: 'Concise', t: 'Short answers.' }, { l: 'Technical', t: 'Deep dive.' }, { l: 'Creative', t: 'Unconventional.' }];
+    if (quickButtonsContainer) {
+        quickButtonsContainer.innerHTML = '';
+        qButtons.forEach(a => {
             const b = document.createElement('button');
             b.className = 'btn-toggle'; b.textContent = a.l; b.style.fontSize = '9px';
             b.onclick = () => { instructionsText.value = a.t; checkChanges(); };
-            quickButtonsContainer_I.appendChild(b);
+            quickButtonsContainer.appendChild(b);
         });
     }
     if (instructionsText) instructionsText.oninput = () => checkChanges();
@@ -279,7 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.nav-tab').forEach(tab => {
         tab.onclick = () => {
-            state.activeTab = tab.textContent.trim().toUpperCase();
+            state.activeTab = tab.dataset.tab.toUpperCase();
             applyActiveTab(state.activeTab);
             safeStorage.set({ activeTab: state.activeTab });
             broadcastState();
@@ -292,7 +550,7 @@ document.addEventListener('DOMContentLoaded', () => {
         r.oninput = () => {
             if (input) input.value = r.value;
             updateSliderProgress(r);
-            state.config[r.id === 'range-temp' ? 'temp' : 'topP'] = r.value;
+            state.config[{ 'range-temp': 'temp', 'range-top-p': 'topP', 'range-max-tokens': 'maxTokens' }[r.id]] = r.value;
             broadcastState();
             checkChanges();
         };
@@ -305,7 +563,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 val = Math.max(parseFloat(r.min), Math.min(parseFloat(r.max), val));
                 r.value = val;
                 updateSliderProgress(r);
-                state.config[r.id === 'range-temp' ? 'temp' : 'topP'] = r.value;
+                state.config[{ 'range-temp': 'temp', 'range-top-p': 'topP', 'range-max-tokens': 'maxTokens' }[r.id]] = r.value;
                 broadcastState();
                 checkChanges();
             };
@@ -318,6 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.input-row .btn-toggle').forEach(btn => btn.onclick = () => {
         btn.classList.toggle('active');
+        applyMirroring(btn.id);
         saveCurrentConfig();
     });
 
@@ -326,7 +585,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showConfirm("DISABLE SYSTEM", "This will suspend all Better AI Studio enhancements. Proceed?", () => {
                 saveCurrentConfig();
             });
-            // Revert visually until confirmed
             e.target.checked = false;
         } else {
             saveCurrentConfig();
@@ -361,54 +619,39 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        presetsContainer.querySelectorAll('.btn-up').forEach(btn => btn.onclick = (e) => {
-            e.stopPropagation();
-            const idx = parseInt(btn.dataset.index);
-            if (idx > 0) {
-                const temp = state.presets[idx];
-                state.presets[idx] = state.presets[idx - 1];
-                state.presets[idx - 1] = temp;
-                if (state.activePresetIndex === idx) state.activePresetIndex = idx - 1;
-                else if (state.activePresetIndex === idx - 1) state.activePresetIndex = idx;
+        const reorder = (idx, dir) => {
+            const target = idx + dir;
+            if (target >= 0 && target < state.presets.length) {
+                [state.presets[idx], state.presets[target]] = [state.presets[target], state.presets[idx]];
+                if (state.activePresetIndex === idx) state.activePresetIndex = target;
+                else if (state.activePresetIndex === target) state.activePresetIndex = idx;
                 savePresets();
             }
-        });
-
-        presetsContainer.querySelectorAll('.btn-down').forEach(btn => btn.onclick = (e) => {
-            e.stopPropagation();
-            const idx = parseInt(btn.dataset.index);
-            if (idx < state.presets.length - 1) {
-                const temp = state.presets[idx];
-                state.presets[idx] = state.presets[idx + 1];
-                state.presets[idx + 1] = temp;
-                if (state.activePresetIndex === idx) state.activePresetIndex = idx + 1;
-                else if (state.activePresetIndex === idx + 1) state.activePresetIndex = idx;
-                savePresets();
-            }
-        });
+        };
+        presetsContainer.querySelectorAll('.btn-up').forEach(btn => btn.onclick = (e) => { e.stopPropagation(); reorder(parseInt(btn.dataset.index), -1); });
+        presetsContainer.querySelectorAll('.btn-down').forEach(btn => btn.onclick = (e) => { e.stopPropagation(); reorder(parseInt(btn.dataset.index), 1); });
 
         presetsContainer.querySelectorAll('.preset-title').forEach(el => {
             el.onclick = () => {
                 const idx = parseInt(el.dataset.index);
                 if (state.activePresetIndex !== idx) {
                     state.activePresetIndex = idx;
+                    state.config = { ...state.presets[idx].config };
+                    originalConfig = JSON.stringify(state.config);
+                    applyConfig(state.config);
                     savePresets();
+                    safeStorage.set({ config: state.config });
                 }
             };
             el.ondblclick = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
+                e.preventDefault(); e.stopPropagation();
                 const idx = parseInt(el.dataset.index);
                 const span = el.querySelector('.title-text');
-                if (!span) return;
                 const inp = document.createElement('input');
-                inp.className = 'rename-input';
-                inp.value = state.presets[idx].name;
-                span.replaceWith(inp);
-                inp.focus();
-                inp.select();
-                inp.onblur = () => { if (inp.value.trim()) state.presets[idx].name = inp.value.trim(); savePresets(); };
-                inp.onkeydown = (ev) => { if (ev.key === 'Enter') inp.blur(); if (ev.key === 'Escape') { renderPresets(); } };
+                inp.className = 'rename-input'; inp.value = state.presets[idx].name;
+                span.replaceWith(inp); inp.focus(); inp.select();
+                inp.onblur = () => { if (inp.value.trim()) state.presets[idx].name = inp.value.trim(); renderPresets(); savePresets(); };
+                inp.onkeydown = (ev) => { if (ev.key === 'Enter') inp.blur(); if (ev.key === 'Escape') renderPresets(); };
             };
         });
     };
