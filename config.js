@@ -36,36 +36,61 @@ const BAS_CONFIG = {
       url: false,
       code: false,
       structured: false,
+      structuredSchema: "",
       functions: false,
+      functionsSchema: "",
       temp: "1.00",
       topP: "0.95",
-      maxTokens: "2048"
+      topK: "40",
+      maxTokens: "65536",
+      thinkingLevel: "High",
+      stopSequences: "",
+      safetySettings: {
+        harassment: "OFF",
+        hate: "OFF",
+        sexuallyExplicit: "OFF",
+        dangerousContent: "OFF"
+      },
+      aspectRatio: "1:1",
+      resolution: "Default"
     }
   },
   models: {
     'gemini-3-pro': {
-      name: 'Gemini 3 Pro',
+      name: 'Gemini 3 Pro Preview',
       id: 'models/gemini-3-pro-preview',
+      uiId: 'gemini-3-pro-preview',
+      uiLabel: 'Gemini 3 Pro Preview',
       tempRange: { min: 0, max: 2, step: 0.05 },
-      capabilities: { search: true, code: true, functions: true, structured: true, url: true }
+      topPRange: { min: 0, max: 1, step: 0.01 },
+      maxTokensRange: { min: 1, max: 65536, step: 1 },
+      topKRange: { min: 1, max: 100, step: 1 },
+      capabilities: { search: true, url: true, code: true, functions: true, structured: true, thinkingLevel: true, topK: true, stopSequences: true, safetySettings: true },
+      defaults: { temp: '1.00', topP: '0.95', topK: '40', maxTokens: '65536', search: true, url: true, code: false, structured: false, structuredSchema: "", functions: false, functionsSchema: "", instructions: "", thinkingLevel: "High", stopSequences: "", safetySettings: { harassment: "OFF", hate: "OFF", sexuallyExplicit: "OFF", dangerousContent: "OFF" } }
     },
     'gemini-3-flash': {
-      name: 'Gemini 3 Flash',
+      name: 'Gemini 3 Flash Preview',
       id: 'models/gemini-3-flash-preview',
+      uiId: 'gemini-3-flash-preview',
+      uiLabel: 'Gemini 3 Flash Preview',
       tempRange: { min: 0, max: 2, step: 0.05 },
-      capabilities: { search: true, code: true, functions: true, structured: true, url: true }
-    },
-    'gemini-2.5-pro': {
-      name: 'Gemini 2.5 Pro',
-      id: 'models/gemini-2.5-pro-preview',
-      tempRange: { min: 0, max: 2, step: 0.05 },
-      capabilities: { search: true, code: true, functions: true, structured: true, url: true }
+      topPRange: { min: 0, max: 1, step: 0.01 },
+      maxTokensRange: { min: 1, max: 65536, step: 1 },
+      topKRange: { min: 1, max: 100, step: 1 },
+      capabilities: { search: true, url: true, code: true, functions: true, structured: true, thinkingLevel: true, topK: true, stopSequences: true, safetySettings: true },
+      defaults: { temp: '0.70', topP: '0.95', topK: '40', maxTokens: '65536', search: true, url: true, code: false, structured: false, structuredSchema: "", functions: false, functionsSchema: "", instructions: "", thinkingLevel: "High", stopSequences: "", safetySettings: { harassment: "OFF", hate: "OFF", sexuallyExplicit: "OFF", dangerousContent: "OFF" } }
     },
     'nano-banana-pro': {
       name: 'Nano Banana Pro',
       id: 'models/gemini-3-pro-image-preview',
+      uiId: 'gemini-3-pro-image-preview',
+      uiLabel: 'Nano Banana Pro',
       tempRange: { min: 0, max: 1, step: 0.01 },
-      capabilities: { search: false, code: false, functions: false, structured: false, url: false, aspectRatio: true, resolution: true }
+      topPRange: { min: 0, max: 1, step: 0.01 },
+      maxTokensRange: { min: 1, max: 65536, step: 1 },
+      topKRange: { min: 1, max: 100, step: 1 },
+      capabilities: { search: true, url: false, code: false, functions: false, structured: false, aspectRatio: true, resolution: true, topK: true, stopSequences: true },
+      defaults: { temp: '0.70', topP: '0.95', topK: '40', maxTokens: '65536', search: false, url: false, code: false, structured: false, structuredSchema: "", functions: false, functionsSchema: "", instructions: "", stopSequences: "", safetySettings: { harassment: "OFF", hate: "OFF", sexuallyExplicit: "OFF", dangerousContent: "OFF" }, aspectRatio: '1:1', resolution: 'Default' }
     }
   }
 };
